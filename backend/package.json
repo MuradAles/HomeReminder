@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend for HomeReminder",
+  "main": "app.js",
+  "scripts": {
+    "test": "node ./tasks/test.js",
+    "seed": "node ./tasks/seed.js",
+    "start": "node app.js"
+  },
+  "author": "Murad Aleskerov",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongodb": "^6.2.0"
+  }
+}
