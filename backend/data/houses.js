@@ -28,25 +28,50 @@ const createHouse = async (userId, houseName) => {
     };
     const newInsertInformation = await housesDataCollection.insertOne(newHouse);
     if (newInsertInformation.insertedCount === 0) throw 'Insert failed!';
-
-    const insertedHouseId = newInsertInformation.insertedId; // Get the inserted house ID
-
+    const insertedHouseId = newInsertInformation.insertedId;
     const usersDataCollection = await users();
     const updateResult = await usersDataCollection.updateOne(
         { _id: new ObjectId(userId) },
         { $addToSet: { housesID: insertedHouseId.toString() } }
     );
-
-    if (updateResult.modifiedCount === 0) {
-        throw new Error('Failed to update user with the new house');
-    }
-
+    if (updateResult.modifiedCount === 0) throw new Error('Failed to update user with the new house');
     return {
         newHouse
     };
 }
 const getHouse = async (houseId) => {
+    const housesDataCollection = await houses();
+    const objectId = new ObjectId(houseId);
+    const oneHouse = await housesDataCollection.findOne({ _id: objectId });
+    if (oneHouse === null) throw 'No House found';
+    return oneHouse
 }
+const getAllHouses = async (userId) => {
+    const housesDataCollection = await houses();
+    const allHouses = await housesDataCollection
+        .find({ userId: userId })
+        .toArray();
+    if (allHouses.length === 0) return [];
+    return allHouses
+}
+const deleteHouse = async (userId, houseId) => {
+    const usersDataCollection = await users();
+    const housesDataCollection = await houses();
+    const Obj_userId = new ObjectId(userId);
+    const Obj_houseId = new ObjectId(houseId);
+    const House = await housesDataCollection
+        .deleteOne({ _id: Obj_houseId, "userId": userId });
+    if (House.deletedCount === 0) throw `Could not delete House`;
+    const user = await usersDataCollection.updateOne(
+        { _id: Obj_userId },
+        { $pull: { housesID: houseId } }
+    );
+    if (user.modifiedCount === 0) {
+        throw `Could not delete from user's houseID array`;
+    }
+    return getAllHouses(userId);
+}
+
 const changeHouseName = async (userId, houseId, oldHouseName, newHouseName) => {
     try {
         //check user id
@@ -70,10 +95,7 @@ const changeHouseName = async (userId, houseId, oldHouseName, newHouseName) => {
     if (newHouseName === oldHouseName) throw "House Name already exists"
     //find house by userId and houseId
 
-    //check if newHouseName different from OldHouseName
-
     //return userId with HouseId and newHouseId
 }
-const deleteHouse = async (userId, houseId) => { }
 
-module.exports = { createHouse, changeHouseName }
+module.exports = { createHouse, getHouse, getAllHouses, deleteHouse }

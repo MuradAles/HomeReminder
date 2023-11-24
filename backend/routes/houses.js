@@ -8,7 +8,7 @@ const validation = require('../validation');
 router
     .route('/create')
     .post(async (req, res) => {
-        userId = req.body._id
+        userId = req.body.userId
         houseName = req.body.houseName
         // check validaiton
         try {
@@ -37,14 +37,53 @@ router
             return;
         }
     })
+
+router
+    .route('/get')
+    .post(async (req, res) => {
+        const houseId = req.body.houseId
+        let house;
+        try {
+            house = await housesData.getHouse(houseId)
+            res.status(200).json(house);
+        } catch (e) {
+            res.status(400).json({ error: e });
+            return;
+        }
+    })
+
+router
+    .route('/getAll')
+    .post(async (req, res) => {
+        const houseId = req.body.userId
+        let houses = [];
+        try {
+            houses = await housesData.getAllHouses(houseId)
+            res.status(200).json(houses);
+        } catch (e) {
+            res.status(400).json({ error: e });
+            return;
+        }
+    })
+
+router
+    .route('/delete')
+    .post(async (req, res) => {
+        const userId = req.body.userId
+        const houseId = req.body.houseId
+        let houses = [];
+        try {
+            houses = await housesData.deleteHouse(userId, houseId);
+            res.status(200).json({ deleteHouse: houses });
+        } catch (e) {
+            res.status(400).json({ error: e });
+            return;
+        }
+    })
+
 router
     .route('/change')
     .put(async (req, res) => {
-        return
-    })
-router
-    .route('/delete')
-    .delete(async (req, res) => {
         return
     })
 
