@@ -1,7 +1,4 @@
 const MongoClient = require('mongodb').MongoClient;
-const dotenv = require('dotenv');
-dotenv.config();
-
 const serverUrl = 'mongodb://localhost:27017/';
 const mongoConfig = {
     serverUrl: serverUrl,
