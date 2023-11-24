@@ -12,7 +12,6 @@ const getCollectionFn = (collection) => {
 
 module.exports = {
     users: getCollectionFn('users'),
-    lists: getCollectionFn('houses'),
-    rooms: getCollectionFn('rooms'),
-    furnitures: getCollectionFn('furnitures')
+    houses: getCollectionFn('houses'),
+    rooms: getCollectionFn('rooms')
 };
