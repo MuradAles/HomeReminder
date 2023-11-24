@@ -83,8 +83,15 @@ router
 
 router
     .route('/change')
-    .put(async (req, res) => {
-        return
-    })
+    .post(async (req, res) => {
+        const { houseId, oldHouseName, newHouseName } = req.body;
+        let updatedHouse;
+        try {
+            updatedHouse = await housesData.changeHouseName(houseId, oldHouseName, newHouseName);
+            res.status(200).json({ updatedHouse });
+        } catch (e) {
+            res.status(400).json({ error: e });
+        }
+    });
 
 module.exports = router

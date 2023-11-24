@@ -71,31 +71,20 @@ const deleteHouse = async (userId, houseId) => {
     }
     return getAllHouses(userId);
 }
+const changeHouseName = async (houseId, oldHouseName, newHouseName) => {
+    // Check if new HouseName is similar to oldHouseName
+    if (newHouseName === oldHouseName) throw "New house name should be different from the old one.";
+    // Find house by houseId and oldHouseName
+    const housesDataCollection = await houses();
+    const objectId = new ObjectId(houseId);
+    // Update the house name
+    const updatedHouse = await housesDataCollection.findOneAndUpdate(
+        { _id: objectId, houseName: oldHouseName },
+        { $set: { houseName: newHouseName } },
+        { returnOriginal: false }
+    );
+    return getHouse(houseId)
+};
 
-const changeHouseName = async (userId, houseId, oldHouseName, newHouseName) => {
-    try {
-        //check user id
-        userId = userId
-    } catch (e) {
-        throw e
-    }
-    try {
-        //check house id
-        houseId = houseId
-    } catch (e) {
-        throw e
-    }
-    try {
-        //check new House Name
-        newHouseName = newHouseName
-    } catch (e) {
-        throw e
-    }
-    //check if new HouseName not similar to oldHouseName
-    if (newHouseName === oldHouseName) throw "House Name already exists"
-    //find house by userId and houseId
 
-    //return userId with HouseId and newHouseId
-}
-
-module.exports = { createHouse, getHouse, getAllHouses, deleteHouse }
+module.exports = { createHouse, getHouse, getAllHouses, deleteHouse, changeHouseName }
