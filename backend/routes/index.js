@@ -1,10 +1,10 @@
 const userRoutes = require('./users');
-// const listsRoutes = require('./lists');
+const housesRoutes = require('./houses');
 // const roomsRoutes = require('./rooms');
 
 const constructorMethod = (app) => {
     app.use('/users', userRoutes);
-    // app.use('/exercises', listsRoutes);
+    app.use('/houses', housesRoutes);
     // app.use('/routines', roomsRoutes);
     app.use('*', (req, res) => {
         res.sendStatus(404);
