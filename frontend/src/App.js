@@ -10,6 +10,7 @@ import {
   Routes,
 } from "react-router-dom";
 import Navigation from './components/Navigation';
+import Error from './components/Error';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/homes/:userId" element={<HomesView />} />
           <Route path="/homes/:userId/home/:homeId" element={<HomeView/>} />
+          <Route path="*" element={<Error />} />
         </Routes>
       </div>
     </Router>
