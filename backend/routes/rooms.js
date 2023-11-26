@@ -1,36 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const data = require('../data');
-const housesData = data.houses;
+const roomsData = data.rooms
 const validation = require('../validation');
 
 
 router
     .route('/create')
     .post(async (req, res) => {
-        userId = req.body.userId
-        houseName = req.body.houseName
+        houseId = req.body.houseId
+        roomName = req.body.roomName
+        itemsList = req.body.itemsList
         // check validaiton
         try {
-            userId = userId
+            houseId = houseId
         } catch (e) {
             res.status(400).json({ error2: e });
             return;
         }
         try {
-            houseName = houseName
+            roomName = roomName
         } catch (e) {
             res.status(400).json({ error2: e });
             return;
         }
         //create house 
-        let house;
+        let room;
         try {
-            house = await housesData.createHouse(userId, houseName)
+            room = await roomsData.createRoom(houseId, roomName, itemsList)
             res.status(200).json({
-                userId: userId,
-                houseName: house.houseName,
-                roomsId: house.roomsId
+                room
             })
         } catch (e) {
             res.status(400).json({ error3: e });
@@ -41,11 +40,11 @@ router
 router
     .route('/get')
     .post(async (req, res) => {
-        const houseId = req.body.houseId
-        let house;
+        const roomId = req.body.roomId
+        let room;
         try {
-            house = await housesData.getHouse(houseId)
-            res.status(200).json(house);
+            room = await roomsData.getRoom(roomId)
+            res.status(200).json(room);
         } catch (e) {
             res.status(400).json({ error: e });
             return;
@@ -55,11 +54,11 @@ router
 router
     .route('/getAll')
     .post(async (req, res) => {
-        const userId = req.body.userId
-        let houses = [];
+        const houseId = req.body.houseId
+        let rooms = [];
         try {
-            houses = await housesData.getAllHouses(userId)
-            res.status(200).json(houses);
+            rooms = await roomsData.getAllRooms(houseId)
+            res.status(200).json(rooms);
         } catch (e) {
             res.status(400).json({ error: e });
             return;
@@ -69,12 +68,12 @@ router
 router
     .route('/delete')
     .post(async (req, res) => {
-        const userId = req.body.userId
         const houseId = req.body.houseId
-        let houses = [];
+        const roomId = req.body.roomId
+        let room;
         try {
-            houses = await housesData.deleteHouse(userId, houseId);
-            res.status(200).json({ deleteHouse: houses });
+            room = await roomsData.deleteRoom(houseId, roomId);
+            res.status(200).json({ deleteRoom: room });
         } catch (e) {
             res.status(400).json({ error: e });
             return;
@@ -84,11 +83,11 @@ router
 router
     .route('/change')
     .post(async (req, res) => {
-        const { houseId, oldHouseName, newHouseName } = req.body;
-        let updatedHouse;
+        const { roomId, oldRoomName, newRoomName } = req.body;
+        let updatedRoom;
         try {
-            updatedHouse = await housesData.changeHouseName(houseId, oldHouseName, newHouseName);
-            res.status(200).json({ updatedHouse });
+            updatedRoom = await roomsData.changeRoomName(roomId, oldRoomName, newRoomName);
+            res.status(200).json({ updatedRoom });
         } catch (e) {
             res.status(400).json({ error: e });
         }
