@@ -55,10 +55,10 @@ router
 router
     .route('/getAll')
     .post(async (req, res) => {
-        const houseId = req.body.userId
+        const userId = req.body.userId
         let houses = [];
         try {
-            houses = await housesData.getAllHouses(houseId)
+            houses = await housesData.getAllHouses(userId)
             res.status(200).json(houses);
         } catch (e) {
             res.status(400).json({ error: e });
