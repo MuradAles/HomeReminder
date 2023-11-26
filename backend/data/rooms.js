@@ -91,12 +91,78 @@ const changeRoomName = async (roomId, oldRoomName, newRoomName) => {
     );
     return getRoom(roomId)
 };
-const addItemToRoom = async () => {
+const addItemToRoom = async (roomId, ItemName) => {
+    const objectId = new ObjectId(roomId);
+    const roomsDataCollection = await rooms();
+    const room = await getRoom(roomId);
+    if (room.itemsList.includes(ItemName)) {
+        const updateResult = await roomsDataCollection.updateOne(
+            { _id: objectId },
+            { $push: { itemsList: ItemName } }
+        );
+        if (updateResult.modifiedCount === 0) {
+            throw new Error('Failed to update room with the new item');
+        }
+    } else {
+        const updateResult = await roomsDataCollection.updateOne(
+            { _id: objectId },
+            { $addToSet: { itemsList: ItemName } }
+        );
+        if (updateResult.modifiedCount === 0) {
+            throw new Error('Failed to update room with the new item');
+        }
+    }
 
-}
-const deleteItemFromRoom = async () => {
-}
-const changeNameOfItem = async () => {
-}
+    return getRoom(roomId);
+};
 
-module.exports = { createRoom, getRoom, getAllRooms, deleteRoom, changeRoomName }
+const deleteItemFromRoom = async (roomId, itemName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+    const room = await getRoom(roomId);
+    const itemIndex = room.itemsList.indexOf(itemName);
+    if (itemIndex !== -1) {
+        room.itemsList.splice(itemIndex, 1);
+        const updateResult = await roomsDataCollection.updateOne(
+            { _id: objectId },
+            { $set: { itemsList: room.itemsList } }
+        );
+        if (updateResult.modifiedCount === 0) {
+            throw new Error('Failed to delete item from room');
+        }
+    }
+    return getRoom(roomId);
+};
+
+
+const changeNameOfItem = async (roomId, currentName, newName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+
+    const room = await getRoom(roomId);
+    const itemIndex = room.itemsList.indexOf(currentName);
+
+    if (itemIndex !== -1) {
+        room.itemsList[itemIndex] = newName;
+        const updateResult = await roomsDataCollection.updateOne(
+            { _id: objectId },
+            { $set: { itemsList: room.itemsList } }
+        );
+
+        if (updateResult.modifiedCount === 0) {
+            throw new Error('Failed to change item name in room');
+        }
+    }
+
+    return getRoom(roomId);
+};
+module.exports = {
+    createRoom,
+    getRoom,
+    getAllRooms,
+    deleteRoom,
+    changeRoomName,
+    addItemToRoom,
+    deleteItemFromRoom,
+    changeNameOfItem
+}

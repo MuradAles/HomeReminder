@@ -93,4 +93,44 @@ router
         }
     });
 
+router
+    .route('/addItem')
+    .post(async (req, res) => {
+        roomId = req.body.roomId
+        itemName = req.body.itemName
+        try {
+            const updatedRoom = await roomsData.addItemToRoom(roomId, itemName)
+            res.status(200).json({ updatedRoom })
+        } catch (e) {
+            res.status(400).json({ error: e.message });
+        }
+    });
+
+router
+    .route('/deleteItem')
+    .post(async (req, res) => {
+        roomId = req.body.roomId
+        itemName = req.body.itemName
+        try {
+            const updatedRoom = await roomsData.deleteItemFromRoom(roomId, itemName)
+            res.status(200).json({ updatedRoom })
+        } catch (e) {
+            res.status(400).json({ error: e.message });
+        }
+    });
+
+router
+    .route('/changeItem')
+    .post(async (req, res) => {
+        roomId = req.body.roomId
+        currentName = req.body.currentName
+        newName = req.body.newName
+        try {
+            const updatedRoom = await roomsData.changeNameOfItem(roomId, currentName, newName)
+            res.status(200).json({ updatedRoom })
+        } catch (e) {
+            res.status(400).json({ error: e.message });
+        }
+    });
+
 module.exports = router
