@@ -11,13 +11,13 @@ import {
 } from "react-router-dom";
 import Navigation from './components/Navigation';
 import Error from './components/Error';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
     <Router>
       <div>
-        <header className="appHeader">
-          <h1 className="appTitle">Home Reminder</h1>
+        <header>
           <Navigation/>
         </header>
         <Routes>
