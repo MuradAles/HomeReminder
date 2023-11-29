@@ -4,6 +4,8 @@ function Homepage() {
   return (
     <div>
         Welcome to Home Reminder
+        Hi my name is rachel
+        
     </div>
   )
 }
