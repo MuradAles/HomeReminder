@@ -46,13 +46,13 @@ router
         try {
             emailData = validation.validateEmail(emailData);
         } catch (e) {
-            res.status(400).json({ error1: e });
+            res.status(400).json({ error: e });
             return;
         }
         try {
             passwordData = validation.validatePassword(passwordData);
         } catch (e) {
-            res.status(400).json({ error2: e });
+            res.status(400).json({ error: e });
             return;
         }
         let loginIn;
@@ -60,7 +60,7 @@ router
             loginIn = await usersData.createUser(nameData, emailData, passwordData);
             res.status(200).json({ name: loginIn.name, email: loginIn.email, housesID: loginIn.housesID });
         } catch (e) {
-            res.status(400).json({ error3: e });
+            res.status(400).json({ error: e });
             return;
         }
     })

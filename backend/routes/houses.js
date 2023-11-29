@@ -14,13 +14,13 @@ router
         try {
             userId = userId
         } catch (e) {
-            res.status(400).json({ error2: e });
+            res.status(400).json({ error: e });
             return;
         }
         try {
             houseName = houseName
         } catch (e) {
-            res.status(400).json({ error2: e });
+            res.status(400).json({ error: e });
             return;
         }
         //create house 
@@ -33,7 +33,7 @@ router
                 roomsId: house.roomsId
             })
         } catch (e) {
-            res.status(400).json({ error3: e });
+            res.status(400).json({ error: e });
             return;
         }
     })
