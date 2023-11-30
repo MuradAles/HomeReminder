@@ -12,24 +12,33 @@ import {
 import Navigation from './components/Navigation';
 import Error from './components/Error';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { AuthProvider } from './components/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <Router>
-      <div>
-        <header>
-          <Navigation/>
-        </header>
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/homes/:userId" element={<HomesView />} />
-          <Route path="/homes/:userId/home/:homeId" element={<HomeView/>} />
-          <Route path="*" element={<Error />} />
-        </Routes>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div>
+          <header>
+            <Navigation/>
+          </header>
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            
+            <Route path="/homes" element={<PrivateRoute />}> 
+              <Route path="/homes" element={<HomesView />} />
+            </Route>
+            <Route path="/homes/:homeId" element={<PrivateRoute />}>
+              <Route path="/homes/:homeId" element={<HomeView/>} />
+            </Route>
+            <Route path="*" element={<Error />} />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 
