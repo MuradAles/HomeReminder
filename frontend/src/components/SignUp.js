@@ -4,6 +4,8 @@ import Button from "react-bootstrap/Button";
 import IconEye from '../resources/IconEye';
 import IconEyeInvisible from '../resources/InvisibleIconEye';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
+import { NavLink } from 'react-router-dom';
 
 function SignUp() {
   const [username, setUsername] = useState("");
@@ -15,6 +17,7 @@ function SignUp() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const {isLoggedIn} = useAuth();
   const navigate = useNavigate();
 
   const handleUsernameChange = (e) => {
@@ -78,7 +81,7 @@ function SignUp() {
         navigate(`/login`)
       }, 1000)
       return signupData
-      
+
     } catch (e) {
       setError("Please make sure you are running MongoDB");
       setLoading(false);
@@ -96,6 +99,10 @@ function SignUp() {
       passwordElement?.setAttribute("type", "password");
     }
   }
+
+  if (isLoggedIn) {
+    navigate("/homes")
+  }
   
   return (
     <div className='signupWrapper'>
@@ -105,15 +112,15 @@ function SignUp() {
         <form>
           <div className='signupContainer'>
             <label>Username</label>
-            <input value={username} onChange={handleUsernameChange}/>
+            <input value={username} placeholder='Username' onChange={handleUsernameChange}/>
           </div>
           <div className='signupContainer'>
             <label>Email</label>
-            <input value={email} onChange={handleEmailChange}/>
+            <input value={email} placeholder="Email" onChange={handleEmailChange}/>
           </div>
           <label>Password</label>
           <div className='signupContainer'>
-            <input id="passwordInput" type="password" value={password} onChange={handlePasswordChange}/>
+            <input id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
             <button type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordInput')
               setShowPassword(!showPassword)}}>
@@ -122,7 +129,7 @@ function SignUp() {
           </div>
           <label>Confirm Password</label>
           <div className='signupContainer'>
-            <input id="passwordConfirmationInput" type="password" value={confirmPassword} onChange={handleConfirmPasswordChange}/>
+            <input id="passwordConfirmationInput" type="password" placeholder='Confirm Password' value={confirmPassword} onChange={handleConfirmPasswordChange}/>
             <button type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordConfirmationInput')
               setShowConfirmPassword(!showConfirmPassword)}}>
@@ -130,9 +137,13 @@ function SignUp() {
             </button>
           </div>
           <br/>
-          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">{loading ? <div className="spinner-border text-light" role="status"/> : "Sign Up"}
+          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
+            {loading ? <div className="spinner-border text-light" role="status"/> : "Sign Up"}
           </Button>
         </form>
+        <div>
+          <NavLink to="/login">Already have an account? Login here!</NavLink>
+        </div>
     </div>
   )
 }

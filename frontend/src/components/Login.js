@@ -69,7 +69,7 @@ function Login() {
     setEmail("");
     setPassword("");
     setTimeout(()=> {
-      navigate(`/homes/${loginData.id}`)
+      navigate(`/homes`)
     }, 1000)
     return loginData
   }
@@ -85,6 +85,10 @@ function Login() {
     }
   }
 
+  if (isLoggedIn) {
+    navigate("/homes")
+  }
+
   return (
     <div className='signupWrapper'>
         Login
@@ -92,10 +96,10 @@ function Login() {
         {successMessage && <div className='successText'>{successMessage}</div>}
         <form>
           <label>Email</label>
-          <input value={email} onChange={handleEmailChange}/>
+          <input value={email} placeholder='Email' onChange={handleEmailChange}/>
           <label>Password</label>
           <div className='signupContainer'>
-            <input id="passwordInput" type="password" value={password} onChange={handlePasswordChange}/>
+            <input id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
             <button type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordInput')
               setShowPassword(!showPassword)}}>
@@ -103,7 +107,8 @@ function Login() {
             </button>
           </div>
           <br/>
-          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">{loading ? <div className="spinner-border text-light" role="status"/> : "Login"}
+          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
+            {loading ? <div className="spinner-border text-light" role="status"/> : "Login"}
           </Button>
         </form>
         <div>
