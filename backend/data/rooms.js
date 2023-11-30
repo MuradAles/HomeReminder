@@ -5,7 +5,7 @@ const { ObjectId } = require('mongodb');
 const validation = require('../validation');
 
 
-const createRoom = async (houseId, roomName, stringOfItems) => {
+const createRoom = async (houseId, roomName) => {
     try {
         // check if userId exists
         houseId = houseId
@@ -18,21 +18,13 @@ const createRoom = async (houseId, roomName, stringOfItems) => {
     } catch (e) {
         throw e
     }
-    let listOfItems
-    try {
-        listOfItems = stringOfItems
-            .split(', ')
-            .map(item => item.trim());
-    } catch (e) {
-
-    }
     const roomsDataCollection = await rooms();
     let roomsNameDuplication = await roomsDataCollection.findOne({ "houseId": houseId, "roomName": roomName });
     if (roomsNameDuplication !== null) throw 'Room name already exists';
     let newRoom = {
         houseId: houseId,
         roomName: roomName,
-        itemsList: listOfItems
+        furnitureList: {}
     };
     const newInsertInformation = await roomsDataCollection.insertOne(newRoom);
     if (newInsertInformation.insertedCount === 0) throw 'Insert failed!';
@@ -48,7 +40,12 @@ const createRoom = async (houseId, roomName, stringOfItems) => {
 const getRoom = async (roomId) => {
     const roomsDataCollection = await rooms();
     const objectId = new ObjectId(roomId);
-    const oneRoom = await roomsDataCollection.findOne({ _id: objectId });
+    let oneRoom
+    try {
+        oneRoom = await roomsDataCollection.findOne({ _id: objectId });
+    } catch (e) {
+        throw e
+    }
     if (oneRoom === null) throw 'No Room found';
     return oneRoom
 }
@@ -91,78 +88,154 @@ const changeRoomName = async (roomId, oldRoomName, newRoomName) => {
     );
     return getRoom(roomId)
 };
-const addItemToRoom = async (roomId, ItemName) => {
+
+const addFurnitureToRoom = async (roomId, furnitureName, items) => {
     const objectId = new ObjectId(roomId);
     const roomsDataCollection = await rooms();
-    const room = await getRoom(roomId);
-    if (room.itemsList.includes(ItemName)) {
-        const updateResult = await roomsDataCollection.updateOne(
-            { _id: objectId },
-            { $push: { itemsList: ItemName } }
-        );
-        if (updateResult.modifiedCount === 0) {
-            throw new Error('Failed to update room with the new item');
-        }
-    } else {
-        const updateResult = await roomsDataCollection.updateOne(
-            { _id: objectId },
-            { $addToSet: { itemsList: ItemName } }
-        );
-        if (updateResult.modifiedCount === 0) {
-            throw new Error('Failed to update room with the new item');
-        }
+    let room
+    try {
+        room = await getRoom(roomId);
+    } catch (e) {
+        throw e
     }
+    if (room.furnitureList && room.furnitureList[furnitureName]) throw 'Furniture with the same name already exists';
 
+    const itemsArray = items.split(',').map(item => item.trim());
+
+    const updateQuery = {
+        $set: { [`furnitureList.${furnitureName}`]: itemsArray }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to update room with the new furniture';
+    return await getRoom(roomId);
+};
+const changeNameOfFurnitureInRoom = async (roomId, furnitureNewName, furnitureOldName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+    const room = await getRoom(roomId);
+    if (!room.furnitureList || !room.furnitureList[furnitureOldName]) throw 'Furniture to rename does not exist in the room'
+    if (room.furnitureList[furnitureNewName]) throw 'Furniture with the new name already exists'
+    const updatedFurnitureList = { ...room.furnitureList };
+    updatedFurnitureList[furnitureNewName] = updatedFurnitureList[furnitureOldName];
+    delete updatedFurnitureList[furnitureOldName];
+    const updateQuery = {
+        $set: { furnitureList: updatedFurnitureList }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to change furniture name in the room'
+    return getRoom(roomId);
+};
+const deleteFurnitureFromRoom = async (roomId, furnitureName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+    const room = await getRoom(roomId);
+    if (!room.furnitureList || !room.furnitureList[furnitureName]) throw 'Furniture to delete does not exist in the room'
+    const updatedFurnitureList = { ...room.furnitureList };
+    delete updatedFurnitureList[furnitureName];
+    const updateQuery = {
+        $set: { furnitureList: updatedFurnitureList }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to delete furniture from the room'
     return getRoom(roomId);
 };
 
-const deleteItemFromRoom = async (roomId, itemName) => {
+
+
+const addItemsToFurniture = async (roomId, furnitureName, itemName) => {
     const roomsDataCollection = await rooms();
     const objectId = new ObjectId(roomId);
     const room = await getRoom(roomId);
-    const itemIndex = room.itemsList.indexOf(itemName);
-    if (itemIndex !== -1) {
-        room.itemsList.splice(itemIndex, 1);
-        const updateResult = await roomsDataCollection.updateOne(
-            { _id: objectId },
-            { $set: { itemsList: room.itemsList } }
-        );
-        if (updateResult.modifiedCount === 0) {
-            throw new Error('Failed to delete item from room');
-        }
+
+    if (!room.furnitureList || !room.furnitureList[furnitureName]) throw 'Furniture does not exist in the room';
+    const updatedFurniture = { ...room.furnitureList };
+    if (!Array.isArray(updatedFurniture[furnitureName])) {
+        updatedFurniture[furnitureName] = [];
     }
+    updatedFurniture[furnitureName].push(itemName);
+    const updateQuery = {
+        $set: { [`furnitureList.${furnitureName}`]: updatedFurniture[furnitureName] }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to add item to the furniture';
+
+
+    return getRoom(roomId);
+};
+const changeNameOfItemInFurniture = async (roomId, furnitureName, itemNewName, itemOldName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+    const room = await getRoom(roomId);
+    if (!room.furnitureList || !room.furnitureList[furnitureName]) throw 'Furniture does not exist in the room'
+    const furniture = room.furnitureList[furnitureName];
+    let itemUpdated = false;
+    const updatedFurniture = furniture.map(item => {
+        if (!itemUpdated && item === itemOldName) {
+            itemUpdated = true;
+            return itemNewName;
+        }
+        return item;
+    });
+    const updateQuery = {
+        $set: { [`furnitureList.${furnitureName}`]: updatedFurniture }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to change item name in the furniture'
+    return getRoom(roomId);
+};
+const deleteItemFromFurniture = async (roomId, furnitureName, itemName) => {
+    const roomsDataCollection = await rooms();
+    const objectId = new ObjectId(roomId);
+    const room = await getRoom(roomId);
+    if (!room.furnitureList || !room.furnitureList[furnitureName]) throw 'Furniture does not exist in the room';
+    const furniture = room.furnitureList[furnitureName];
+    let itemDeleted = false;
+    const updatedFurniture = furniture.filter(item => {
+        if (!itemDeleted && item === itemName) {
+            itemDeleted = true;
+            return false;
+        }
+        return true;
+    });
+    const updateQuery = {
+        $set: { [`furnitureList.${furnitureName}`]: updatedFurniture }
+    };
+    const updateResult = await roomsDataCollection.updateOne(
+        { _id: objectId },
+        updateQuery
+    );
+    if (updateResult.modifiedCount === 0) throw 'Failed to delete item from the furniture';
     return getRoom(roomId);
 };
 
 
-const changeNameOfItem = async (roomId, currentName, newName) => {
-    const roomsDataCollection = await rooms();
-    const objectId = new ObjectId(roomId);
-
-    const room = await getRoom(roomId);
-    const itemIndex = room.itemsList.indexOf(currentName);
-
-    if (itemIndex !== -1) {
-        room.itemsList[itemIndex] = newName;
-        const updateResult = await roomsDataCollection.updateOne(
-            { _id: objectId },
-            { $set: { itemsList: room.itemsList } }
-        );
-
-        if (updateResult.modifiedCount === 0) {
-            throw new Error('Failed to change item name in room');
-        }
-    }
-
-    return getRoom(roomId);
-};
 module.exports = {
     createRoom,
     getRoom,
     getAllRooms,
     deleteRoom,
     changeRoomName,
-    addItemToRoom,
-    deleteItemFromRoom,
-    changeNameOfItem
+
+    addFurnitureToRoom,
+    changeNameOfFurnitureInRoom,
+    deleteFurnitureFromRoom,
+
+    addItemsToFurniture,
+    changeNameOfItemInFurniture,
+    deleteItemFromFurniture
 }
