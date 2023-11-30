@@ -10,7 +10,6 @@ router
     .post(async (req, res) => {
         houseId = req.body.houseId
         roomName = req.body.roomName
-        itemsList = req.body.itemsList
         // check validaiton
         try {
             houseId = houseId
@@ -25,9 +24,8 @@ router
             return;
         }
         //create house 
-        let room;
         try {
-            room = await roomsData.createRoom(houseId, roomName, itemsList)
+            const room = await roomsData.createRoom(houseId, roomName)
             res.status(200).json({
                 room
             })
@@ -41,9 +39,8 @@ router
     .route('/get')
     .post(async (req, res) => {
         const roomId = req.body.roomId
-        let room;
         try {
-            room = await roomsData.getRoom(roomId)
+            const room = await roomsData.getRoom(roomId)
             res.status(200).json(room);
         } catch (e) {
             res.status(400).json({ error: e });
@@ -55,9 +52,8 @@ router
     .route('/getAll')
     .post(async (req, res) => {
         const houseId = req.body.houseId
-        let rooms = [];
         try {
-            rooms = await roomsData.getAllRooms(houseId)
+            const rooms = await roomsData.getAllRooms(houseId)
             res.status(200).json(rooms);
         } catch (e) {
             res.status(400).json({ error: e });
@@ -70,9 +66,8 @@ router
     .post(async (req, res) => {
         const houseId = req.body.houseId
         const roomId = req.body.roomId
-        let room;
         try {
-            room = await roomsData.deleteRoom(houseId, roomId);
+            const room = await roomsData.deleteRoom(houseId, roomId);
             res.status(200).json({ deleteRoom: room });
         } catch (e) {
             res.status(400).json({ error: e });
@@ -84,9 +79,8 @@ router
     .route('/change')
     .post(async (req, res) => {
         const { roomId, oldRoomName, newRoomName } = req.body;
-        let updatedRoom;
         try {
-            updatedRoom = await roomsData.changeRoomName(roomId, oldRoomName, newRoomName);
+            const updatedRoom = await roomsData.changeRoomName(roomId, oldRoomName, newRoomName);
             res.status(200).json({ updatedRoom });
         } catch (e) {
             res.status(400).json({ error: e });
@@ -94,42 +88,73 @@ router
     });
 
 router
-    .route('/addItem')
+    .route('/addFurnitureToRoom')
     .post(async (req, res) => {
-        roomId = req.body.roomId
-        itemName = req.body.itemName
+        const { roomId, furnitureName, itemName } = req.body
         try {
-            const updatedRoom = await roomsData.addItemToRoom(roomId, itemName)
-            res.status(200).json({ updatedRoom })
+            const newFurniture = await roomsData.addFurnitureToRoom(roomId, furnitureName, itemName)
+            res.status(200).json({ newFurniture });
         } catch (e) {
-            res.status(400).json({ error: e.message });
+            res.status(400).json({ error: e });
         }
     });
 
 router
-    .route('/deleteItem')
+    .route('/deleteFurnitureFromRoom')
     .post(async (req, res) => {
-        roomId = req.body.roomId
-        itemName = req.body.itemName
+        const { roomId, furnitureName } = req.body
         try {
-            const updatedRoom = await roomsData.deleteItemFromRoom(roomId, itemName)
-            res.status(200).json({ updatedRoom })
+            const deleteFurniture = await roomsData.deleteFurnitureFromRoom(roomId, furnitureName)
+            res.status(200).json({ deleteFurniture });
         } catch (e) {
-            res.status(400).json({ error: e.message });
+            res.status(400).json({ error: e });
         }
     });
 
 router
-    .route('/changeItem')
+    .route('/changeNameOfFurniture')
     .post(async (req, res) => {
-        roomId = req.body.roomId
-        currentName = req.body.currentName
-        newName = req.body.newName
+        const { roomId, furnitureNewName, furnitureOldName } = req.body
         try {
-            const updatedRoom = await roomsData.changeNameOfItem(roomId, currentName, newName)
-            res.status(200).json({ updatedRoom })
+            const changeFurniture = await roomsData.changeNameOfFurnitureInRoom(roomId, furnitureNewName, furnitureOldName)
+            res.status(200).json({ changeFurniture });
         } catch (e) {
-            res.status(400).json({ error: e.message });
+            res.status(400).json({ error: e });
+        }
+    });
+
+
+router
+    .route('/addItemToFurniture')
+    .post(async (req, res) => {
+        const { roomId, furnitureName, itemName } = req.body
+        try {
+            const addItem = await roomsData.addItemsToFurniture(roomId, furnitureName, itemName)
+            res.status(200).json({ addItem });
+        } catch (e) {
+            res.status(400).json({ error: e });
+        }
+    });
+router
+    .route('/changeNameOfItemInFurniture')
+    .post(async (req, res) => {
+        const { roomId, furnitureName, itemNewName, itemOldName } = req.body
+        try {
+            const changeFurniture = await roomsData.changeNameOfItemInFurniture(roomId, furnitureName, itemNewName, itemOldName)
+            res.status(200).json({ changeFurniture });
+        } catch (e) {
+            res.status(400).json({ error: e });
+        }
+    });
+router
+    .route('/deleteItemFromFurniture')
+    .post(async (req, res) => {
+        const { roomId, furnitureName, itemName } = req.body
+        try {
+            const deleteFurniture = await roomsData.deleteItemFromFurniture(roomId, furnitureName, itemName)
+            res.status(200).json({ deleteFurniture });
+        } catch (e) {
+            res.status(400).json({ error: e });
         }
     });
 
