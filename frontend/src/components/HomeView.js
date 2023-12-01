@@ -143,6 +143,8 @@ function HomeView({ match }) {
       </div>
     </div>
   );
+  );
 }
 
+export default HomeView;
 export default HomeView;
