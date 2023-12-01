@@ -62,7 +62,7 @@ function HomeView({ match }) {
     const roomInfo = {
       houseId: houseId,
       roomName: createRoomName,
-      itemsList: "",
+      furnitureList: {},
     };
 
     try {
@@ -94,7 +94,7 @@ function HomeView({ match }) {
     }
   };
 
-  const handleRoomNameChange = (e) => {
+  const handleAddRoom = (e) => {
     setCreateRoomName(e.target.value);
   };
 
@@ -107,7 +107,7 @@ function HomeView({ match }) {
       <h2>HouseName</h2>
       <form>
         <label>Add your rooms here</label>
-        <input value={createRoomName} onChange={handleRoomNameChange} />
+        <input value={createRoomName} onChange={handleAddRoom} />
         <Button type="submit" onClick={handleSubmit}>
           {createRoomLoading ? (
             <div className="spinner-border text-light" role="status" />
@@ -134,7 +134,12 @@ function HomeView({ match }) {
             </div>
           ))}
 
-        {selectedRoom && <RoomDetails selectedRoom={selectedRoom} />}
+        {selectedRoom && (
+          <RoomDetails
+            selectedRoom={selectedRoom}
+            updateSelectedRoom={setSelectedRoom}
+          />
+        )}
       </div>
     </div>
   );
