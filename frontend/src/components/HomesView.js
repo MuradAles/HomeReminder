@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { useAuth } from './AuthContext';
 import Button from 'react-bootstrap/esm/Button';
 import { NavLink } from 'react-router-dom';
+import IconPlus from '../resources/IconPlus';
+import IconEdit from '../resources/IconEdit';
+import IconTrash from '../resources/IconTrash';
 
 function HomesView() {
   const {authUser, setAuthUser, isLoggedIn, setIsLoggedIn} = useAuth();
@@ -12,7 +15,14 @@ function HomesView() {
   const [createHouseLoading, setCreateHouseLoading] = useState(false);
   const [createHouseError, setCreateHouseError] = useState("");
   const [houseAdded, setHouseAdded] = useState(false);
-
+  const [houseToDelete, setHouseToDelete] = useState("");
+  const [modelShow, setModelShow] = useState(false);
+  const [newHomeName, setNewHomeName] = useState("");
+  const [houseEdit, setHouseEdit] = useState("");
+  const [oldHouseName, setOldHouseName] = useState("");
+  let oldHomeName = ""
+  let housedeletion = "";
+  let houseToEdit = ""
 
   useEffect(() => {
     async function setHousesView() {
@@ -98,30 +108,155 @@ function HomesView() {
     }
   }
 
-  const handleHomeNameChange = (e) => {
+  const handleHomeNameChange = async (e) => {
     setCreateHouseName(e.target.value);
+  }
+
+  const deleteHouse = async (e) => {
+    setCreateHouseLoading(true);
+    setCreateHouseError("");
+    const endpoint = `http://localhost:4000/houses/delete`
+    const houseInfo = {
+      userId: authUser.id,
+      houseId: housedeletion
+    }
+    let createHouseResponse
+    let createHouseData
+    try {
+        createHouseResponse = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(houseInfo)
+      });
+      createHouseData = await createHouseResponse.json();
+
+      if (createHouseData.error) {
+        setCreateHouseError(createHouseData.error);
+        setCreateHouseLoading(false);
+        return;
+      }
+      console.log(createHouseData);
+      setTimeout(() => {
+        setHouseAdded(true);
+        setCreateHouseLoading(false);
+      }, 1000)
+
+    } catch (e) {
+      console.log("Please make sure you are running MongoDB");
+      setCreateHouseLoading(false);
+      setCreateHouseError("Please make sure you are running MongoDB");
+      return;
+    }
+  }
+
+  const editHouse = async (e) => {
+    e.preventDefault();
+    setCreateHouseLoading(true);
+    setCreateHouseError("");
+    const endpoint = `http://localhost:4000/houses/change`
+    const houseInfo = {
+      oldHouseName: oldHouseName,
+      houseId: houseEdit,
+      newHouseName: newHomeName
+    }
+    let createHouseResponse
+    let createHouseData
+    try {
+        createHouseResponse = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(houseInfo)
+      });
+      createHouseData = await createHouseResponse.json();
+
+      if (createHouseData.error) {
+        setCreateHouseError(createHouseData.error);
+        setCreateHouseLoading(false);
+        return;
+      }
+      console.log(createHouseData);
+      setTimeout(() => {
+        setHouseAdded(true);
+        setCreateHouseLoading(false);
+      }, 1000)
+
+    } catch (e) {
+      console.log("Please make sure you are running MongoDB");
+      setCreateHouseLoading(false);
+      setCreateHouseError("Please make sure you are running MongoDB");
+      return;
+    }
+  }
+
+  const handleNewNameChange = (e) => {
+    setNewHomeName(e.target.value);
   }
   
   return (
-    <div>
-        My Homes
-        <form>
-          <label>Add your homes here!</label>
-          <input value={createHouseName} onChange={handleHomeNameChange} placeholder='Home Name'/>
-          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
-            {createHouseLoading ? <div className="spinner-border text-light" role="status"/> : "Create House"}
-          </Button>
-        </form>
+    <div className='housesViewWrapper'>
+      <div className='housesViewComponents'>
+        <h1>My Homes</h1>
+      </div>
+      <hr/>
 
-        <div>
-          {housesError && <div className='errorText'>{housesError}</div>}
-          {housesLoading && <div className="spinner-border text-light" role="status"/>}
-          {houses && !housesLoading && houses.map((house) => (
-            <Button id="navButton" variant="custom">
-              <NavLink className="navLink" to={`/homes/${house._id}`}>{house.houseName}</NavLink>
-            </Button> 
-          ))}
+      {!modelShow && <div className='housesViewComponentSpecial'>
+        <form>
+        <div className='buttonIn'>
+          <input value={createHouseName} onChange={handleHomeNameChange} placeholder='Add your homes here'/>
+          
+            <button type="submit" onClick={handleSubmit} >
+              {createHouseLoading ? <div className="spinner-border text" role="status"/> : <IconPlus/>}
+            </button>
+          </div>
+        </form>
+      </div> }
+
+      { modelShow && (
+        <div className='housesViewComponentSpecial'>
+          <form>
+          <div className='buttonIn'>
+            <input value={newHomeName} onChange={handleNewNameChange} placeholder='Enter new house name here'/>
+            <button type="button" onClick={editHouse} >
+              {createHouseLoading ? <div className="spinner-border text" role="status"/> : <IconEdit/>}
+            </button>
+          </div>
+          <div className='exitEdit'>
+            <Button variant='custom' onClick={() => setModelShow(false)}>Click here to exit editing</Button>
+          </div>
+          </form>
         </div>
+      )}
+
+      <div className='housesViewComponents'>
+        {housesError && <div className='errorText'>{housesError}</div>}
+        {housesLoading && <div className="spinner-border text" role="status"/>}
+        {houses && !housesLoading && houses.map((house) => (
+          <div key={house._id} className='housesViewHouses'>
+            <button className='housesViewHousesButton'>
+              <NavLink className="navLink2" to={`/homes/${house._id}`}>{house.houseName}</NavLink>
+            </button> 
+            <div>
+              <button className='buttonStack1' onClick={() => {
+                houseToEdit = house._id
+                oldHomeName = house.houseName
+                setModelShow(true)
+                setHouseEdit(house._id)
+                setOldHouseName(house.houseName)
+                }}><IconEdit/></button>
+              <button className='buttonStack2' onClick={() => {
+                housedeletion = house._id
+                deleteHouse()
+              }}><IconTrash/></button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

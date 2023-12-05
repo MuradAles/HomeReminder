@@ -84,7 +84,9 @@ router
 router
     .route('/change')
     .post(async (req, res) => {
-        const { houseId, oldHouseName, newHouseName } = req.body;
+        const houseId = req.body.houseId
+        const oldHouseName = req.body.oldHouseName;
+        const newHouseName = req.body.newHouseName;
         let updatedHouse;
         try {
             updatedHouse = await housesData.changeHouseName(houseId, oldHouseName, newHouseName);
