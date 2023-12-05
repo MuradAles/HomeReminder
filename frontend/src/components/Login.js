@@ -91,12 +91,14 @@ function Login() {
 
   return (
     <div className='signupWrapper'>
-        Login
+        <h1>Login</h1>
         {error && <div className='errorText'>{error}</div>}
         {successMessage && <div className='successText'>{successMessage}</div>}
         <form>
-          <label>Email</label>
-          <input value={email} placeholder='Email' onChange={handleEmailChange}/>
+          <div className='signupContainer'>
+            <label>Email</label>
+            <input value={email} placeholder='Email' onChange={handleEmailChange}/>
+          </div>
           <label>Password</label>
           <div className='signupContainer'>
             <input id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
@@ -107,10 +109,13 @@ function Login() {
             </button>
           </div>
           <br/>
-          <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
-            {loading ? <div className="spinner-border text-light" role="status"/> : "Login"}
-          </Button>
+          <div className='signupButton'>
+            <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
+              {loading ? <div className="spinner-border text-light" role="status"/> : "Login"}
+            </Button>
+          </div>
         </form>
+        <br/>
         <div>
           <NavLink to="/signup">Don't have an account? Sign up here!</NavLink>
         </div>

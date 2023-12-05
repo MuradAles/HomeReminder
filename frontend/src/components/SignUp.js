@@ -106,7 +106,7 @@ function SignUp() {
   
   return (
     <div className='signupWrapper'>
-        Sign up
+        <h1>Sign Up</h1>
         {error && <div className='errorText'>{error}</div>}
         {successMessage && <div className='successText'>{successMessage}</div>}
         <form>
@@ -137,10 +137,13 @@ function SignUp() {
             </button>
           </div>
           <br/>
+          <div className='signupButton'>
           <Button type="submit" onClick={handleSubmit} id="navButton" variant="custom">
             {loading ? <div className="spinner-border text-light" role="status"/> : "Sign Up"}
           </Button>
+          </div>
         </form>
+        <br/>
         <div>
           <NavLink to="/login">Already have an account? Login here!</NavLink>
         </div>
