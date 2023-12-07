@@ -208,9 +208,10 @@ function HomesView() {
       {!modelShow && <div className='housesViewComponentSpecial'>
         <form>
         <div className='buttonIn'>
-          <input value={createHouseName} onChange={handleHomeNameChange} placeholder='Add your homes here'/>
+          <label htmlFor='createHouseInput'/>
+          <input id="createHouseInput" name="createHouseInput" value={createHouseName} onChange={handleHomeNameChange} placeholder='Add your homes here'/>
           
-            <button type="submit" onClick={handleSubmit} >
+            <button aria-label="createHouse" type="submit" onClick={handleSubmit} >
               {createHouseLoading ? <div className="spinner-border text" role="status"/> : <IconPlus/>}
             </button>
           </div>
@@ -221,8 +222,9 @@ function HomesView() {
         <div className='housesViewComponentSpecial'>
           <form>
           <div className='buttonIn'>
-            <input value={newHomeName} onChange={handleNewNameChange} placeholder='Enter new house name here'/>
-            <button type="button" onClick={editHouse} >
+            <label htmlFor='editHouseInput'/>
+            <input id="editHouseInput" value={newHomeName} onChange={handleNewNameChange} placeholder='Enter new house name here'/>
+            <button aria-label='editHouse' onClick={editHouse} >
               {createHouseLoading ? <div className="spinner-border text" role="status"/> : <IconEdit/>}
             </button>
           </div>
@@ -242,14 +244,14 @@ function HomesView() {
               <NavLink className="navLink2" to={`/homes/${house._id}`}>{house.houseName}</NavLink>
             </button> 
             <div>
-              <button className='buttonStack1' onClick={() => {
+              <button aria-label='editHouse' className='buttonStack1' onClick={() => {
                 houseToEdit = house._id
                 oldHomeName = house.houseName
                 setModelShow(true)
                 setHouseEdit(house._id)
                 setOldHouseName(house.houseName)
                 }}><IconEdit/></button>
-              <button className='buttonStack2' onClick={() => {
+              <button aria-label='deleteHouse' className='buttonStack2' onClick={() => {
                 housedeletion = house._id
                 deleteHouse()
               }}><IconTrash/></button>

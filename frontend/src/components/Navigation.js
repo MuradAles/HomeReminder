@@ -23,19 +23,19 @@ function Navigation() {
             <h1 className="appTitle">Home Reminder</h1>
         </div>
         <div className='navButtons'>
-            <Button id="navButton" variant="custom">
+            <Button variant="custom">
                 <NavLink className="navLink" to="/">Home</NavLink>
             </Button>
             {!isLoggedIn && 
-            <Button id="navButton" variant="custom">
+            <Button variant="custom">
                 <NavLink className="navLink" to="/login">Login</NavLink>
             </Button> }
             {isLoggedIn && 
-            <Button id="navButton" variant="custom">
+            <Button variant="custom">
                 <NavLink className="navLink" to={`/homes`}>My Homes</NavLink>
             </Button> }
             {isLoggedIn &&
-            <Button id="navButton" variant="custom" onClick={logOut}>
+            <Button variant="custom" onClick={logOut}>
                 Log Out
             </Button> }
         </div>

@@ -111,26 +111,26 @@ function SignUp() {
         {successMessage && <div className='successText'>{successMessage}</div>}
         <form>
           <div className='signupContainer'>
-            <label>Username</label>
-            <input value={username} placeholder='Username' onChange={handleUsernameChange}/>
+            <label htmlFor='username'>Username</label>
+            <input id="username" name="username" value={username} placeholder='Username' onChange={handleUsernameChange}/>
           </div>
           <div className='signupContainer'>
-            <label>Email</label>
-            <input value={email} placeholder="Email" onChange={handleEmailChange}/>
+            <label htmlFor='email'>Email</label>
+            <input id="email" name="email" value={email} placeholder="Email" onChange={handleEmailChange}/>
           </div>
-          <label>Password</label>
+          <label htmlFor='passwordInput'>Password</label>
           <div className='signupContainer'>
-            <input id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
-            <button type="button" className="eyeIcon" onClick={() => { 
+            <input id="passwordInput" name="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
+            <button aria-label='showPassword' type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordInput')
               setShowPassword(!showPassword)}}>
                 {showPassword ? <IconEye /> : <IconEyeInvisible />}
             </button>
           </div>
-          <label>Confirm Password</label>
+          <label htmlFor='passwordConfirmationInput'>Confirm Password</label>
           <div className='signupContainer'>
-            <input id="passwordConfirmationInput" type="password" placeholder='Confirm Password' value={confirmPassword} onChange={handleConfirmPasswordChange}/>
-            <button type="button" className="eyeIcon" onClick={() => { 
+            <input id="passwordConfirmationInput" name="passwordConfirmationInput" type="password" placeholder='Confirm Password' value={confirmPassword} onChange={handleConfirmPasswordChange}/>
+            <button aria-label='showPasswordConfirmation' type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordConfirmationInput')
               setShowConfirmPassword(!showConfirmPassword)}}>
                 {showConfirmPassword ? <IconEye /> : <IconEyeInvisible />}

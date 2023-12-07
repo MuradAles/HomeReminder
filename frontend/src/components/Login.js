@@ -96,13 +96,13 @@ function Login() {
         {successMessage && <div className='successText'>{successMessage}</div>}
         <form>
           <div className='signupContainer'>
-            <label>Email</label>
-            <input value={email} placeholder='Email' onChange={handleEmailChange}/>
+            <label htmlFor="Email">Email</label>
+            <input id="Email" name="Email" value={email} placeholder='Email' onChange={handleEmailChange}/>
           </div>
-          <label>Password</label>
+          <label htmlFor="passwordInput">Password</label>
           <div className='signupContainer'>
-            <input id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
-            <button type="button" className="eyeIcon" onClick={() => { 
+            <input name="Password" id="passwordInput" type="password" placeholder='Password' value={password} onChange={handlePasswordChange}/>
+            <button title="showPassword" name="showPassword" id="showPassword" type="button" className="eyeIcon" onClick={() => { 
               showToggle('passwordInput')
               setShowPassword(!showPassword)}}>
                 {showPassword ? <IconEye /> : <IconEyeInvisible />}
