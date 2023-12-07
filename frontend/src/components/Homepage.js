@@ -1,5 +1,6 @@
 import React from 'react'
 import Button from "react-bootstrap/Button"
+import { NavLink } from 'react-router-dom'
 
 function Homepage() {
   return (
@@ -9,7 +10,7 @@ function Homepage() {
       <h1>made simple and organized</h1>
       </div>
     <div className="box box2">
-      <Button variant = "custom"> Start Planning </Button></div>
+      <Button variant = "custom">  <NavLink className="navLink" to={`/homes`}>My Homes</NavLink> </Button></div>
     <div className="box box3">
       <div className = "p2">
       <p>Why Home Reminder?</p>
