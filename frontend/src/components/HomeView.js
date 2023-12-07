@@ -203,7 +203,9 @@ function HomeView({ match }) {
                 width: "80%",
               }}
             >
+              <label htmlFor="createRoom"/>
               <input
+                id="createRoom"
                 value={createRoomName}
                 onChange={handleAddRoom}
                 style={{
@@ -224,7 +226,7 @@ function HomeView({ match }) {
                 }}
                 onClick={handleSubmit}
               >
-                <button style={{ border: "none", background: "none" }}>
+                <button aria-label="createRoom" style={{ border: "none", background: "none" }}>
                   {createRoomLoading ? (
                     <div className="spinner-border text-light" role="status" />
                   ) : (
